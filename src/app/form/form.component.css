@@ -1,0 +1,36 @@
+.form-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.column-display {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.mat-radio-label {
+  padding: 20px 0;
+}
+
+.fieldset-cont {
+  display: flex;
+  justify-content: space-between;
+}
+
+.col-50 {
+  width: 50%;
+}
+
+.mat-checkbox {
+  margin-right: 20px;
+}
+
+.simple-margin {
+  margin: 8px 0;
+}
+
+.row-display {
+  display: flex;
+
+}

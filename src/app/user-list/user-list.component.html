@@ -1,0 +1,17 @@
+<mat-card>
+  <mat-card-content>
+    <mat-card class="user-item" *ngFor="let user of users">
+      <mat-card-content class="user-item-content">
+        <div class="user-item-info">
+          <p>{{user.firstName}} {{user.lastName}}</p>
+        </div>
+        <div>
+          <button (click)="editUser(user)" color="accent" mat-stroked-button>Edit</button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </mat-card-content>
+  <mat-card-actions>
+    <button color="accent" (click)="addUser()" mat-stroked-button>Add User</button>
+  </mat-card-actions>
+</mat-card>

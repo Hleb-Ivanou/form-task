@@ -1,0 +1,62 @@
+<form *ngIf="isShowForm" [formGroup]="profileForm" novalidate (ngSubmit)="onSubmit()">
+  <mat-card>
+    <mat-card-content>
+      <fieldset class="simple-margin">
+        <div class="form-row">
+          <mat-form-field color="accent" class="simple-margin">
+            <input matInput formControlName="firstName" type="text" placeholder="first name">
+            <mat-error *ngIf="profileFormComtrols.firstName.invalid">{{errorMsg.required}}</mat-error>
+          </mat-form-field>
+          <mat-form-field color="accent" class="simple-margin">
+            <input matInput formControlName="lastName" type="text" placeholder="last name">
+            <mat-error *ngIf="profileFormComtrols.lastName.invalid">{{errorMsg.required}}</mat-error>
+          </mat-form-field>
+        </div>
+        <div class="form-row">
+          <mat-form-field color="accent" class="simple-margin">
+            <input matInput formControlName="email" type="text" placeholder="email">
+            <mat-error *ngIf="profileFormComtrols.email.invalid && profileFormComtrols.email.errors.required">{{errorMsg.required}}</mat-error>
+            <mat-error *ngIf="profileFormComtrols.email.invalid  && profileFormComtrols.email.errors.email">{{errorMsg.email}}</mat-error>
+          </mat-form-field>
+          <mat-form-field color="accent" class="simple-margin">
+            <input matInput formControlName="phone" [textMask]="{mask: mask}" type="text" placeholder="phone: +375(XX)XXXXXXX">
+            <mat-error *ngIf="profileFormComtrols.phone.invalid && profileFormComtrols.phone.errors.required">{{errorMsg.required}}</mat-error>
+            <mat-error *ngIf="profileFormComtrols.phone.invalid && profileFormComtrols.phone.errors.pattern">{{errorMsg.phone}}</mat-error>
+          </mat-form-field>
+        </div>
+      </fieldset>
+      <fieldset class="simple-margin">
+        <mat-radio-group class="column-display" formArrayName="roles">
+          <mat-radio-button class="simple-margin" (change)="onChangeRole(role)" [checked]="profileForm.value.checkedRoleId === role.id"
+            [value]="role.name" *ngFor="let role of profileForm.value.roles">
+            {{ role.name }}
+          </mat-radio-button>
+          <div class="row-display">
+            <mat-checkbox *ngFor="let skill of profileForm.value.skills | filter : profileForm.value.checkedRoleId; let i = index"
+              [formControlName]="i">
+              {{skill.name}} {{profileForm.value.skills | json}}
+            </mat-checkbox>
+          </div>
+        </mat-radio-group>
+      </fieldset>
+      <fieldset class="fieldset-cont simple-margin">
+        <mat-slide-toggle class="col-50 simple-margin" [checked]="profileForm.value.isReadyToRelocate" (change)="onChangeReadyToRelocate()">
+          Ready to Relocate
+        </mat-slide-toggle>
+        <mat-form-field class="col-50 simple-margin" *ngIf="profileForm.value.isReadyToRelocate" color="accent">
+          <mat-select placeholder="locations" formArrayName="locations" multiple [value]="profileForm.value.checkedlocationsId">
+            <mat-option value={{location.id}} *ngFor="let location of profileForm.value.locations">
+              {{location.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </fieldset>
+    </mat-card-content>
+    <mat-card-actions>
+      <button color="accent" (sumbmit)="onSubmit()" [disabled]='!profileForm.valid' mat-flat-button>Submit</button>
+    </mat-card-actions>
+    <mat-card-footer>
+      {{currentUser | json}}
+    </mat-card-footer>
+  </mat-card>
+</form>

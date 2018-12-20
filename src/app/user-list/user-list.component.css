@@ -1,0 +1,13 @@
+.screen-1 {
+  width: 45%;
+}
+
+.user-item {
+  margin: 20px 0;
+  background-color: #535353;
+}
+
+.user-item-content {
+  display: flex;
+  justify-content: space-between;
+}
