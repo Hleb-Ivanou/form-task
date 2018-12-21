@@ -9,14 +9,12 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { UserListComponent } from './user-list/user-list.component';
 import { FormComponent } from './form/form.component';
 import { TextMaskModule } from 'angular2-text-mask';
-import { FilterPipe } from './pipes/filter.pipe';
 
 @NgModule({
   declarations: [
     AppComponent,
     UserListComponent,
-    FormComponent,
-    FilterPipe
+    FormComponent
   ],
   imports: [
     BrowserModule,

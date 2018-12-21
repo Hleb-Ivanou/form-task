@@ -9,70 +9,56 @@ import { USERS } from './mock/users.mock';
 })
 export class UserService {
 
-  private users = new BehaviorSubject<User[]>(USERS);
-  private currentUser = new Subject<User>();
-  private isShowForm = new BehaviorSubject<boolean>(false);
-  private isEdit = new BehaviorSubject<boolean>(false);
+  private usersData = new BehaviorSubject<User[]>(USERS);
+  users = this.usersData.asObservable();
+
+  private currentUserData = new Subject<User>();
+  currentUser = this.currentUserData.asObservable();
 
   constructor() { }
 
   getUsers(): Observable<User[]> {
-    return this.users.asObservable();
+    return this.users;
   }
 
   getCurrentUser(): Observable<User> {
-    return this.currentUser.asObservable();
+    return this.currentUser;
   }
 
-  getIsShowForm(): Observable<boolean> {
-    return this.isShowForm.asObservable();
+  updateCurrentUser(user: User): void {
+    this.currentUserData.next(user);
   }
 
-  getIsEdit(): Observable<boolean> {
-    return this.isEdit.asObservable();
-  }
+  // submitForm(user: User) {
+  //   this.isEdit.value ? this.updateUser(user) : this.addUser(user);
+  // }
 
-  setCurrentUser(user: User): void {
-    this.currentUser.next(user);
-  }
+  // updateUser(user: User) {
+  //   this.users.next([
+  //     ...this.users.value.map(el => {
+  //       if (el.id === user.id) {
+  //         return user;
+  //       }
+  //       return el;
+  //     })
+  //   ]);
+  // }
 
-  submitForm(user: User) {
-    this.isEdit.value ? this.updateUser(user) : this.addUser(user);
-  }
+  // addUser(user: User): void {
+  //   const newUsers = [...this.users.value];
+  //   newUsers.push(user);
+  //   this.users.next(newUsers);
+  // }
 
-  updateUser(user: User) {
-    this.users.next([
-      ...this.users.value.map(el => {
-        if (el.id === user.id) {
-          return user;
-        }
-        return el;
-      })
-    ]);
-  }
+  // generateUserId() {
+  //   const newId = Math.floor(Math.random() * 100);
+  //   this.users.value.forEach(el => {
+  //     if (el.id === newId) {
+  //       console.log(newId);
+  //     } else {
+  //       return newId;
+  //     }
+  //   });
+  // }
 
-  addUser(user: User): void {
-    const newUsers = [...this.users.value];
-    newUsers.push(user);
-    this.users.next(newUsers);
-  }
-
-  generateUserId() {
-    const newId = Math.floor(Math.random() * 100);
-    this.users.value.forEach(el => {
-      if (el.id === newId) {
-        console.log(newId);
-      } else {
-        return newId;
-      }
-    });
-  }
-
-  showForm() {
-    this.isShowForm.next(true);
-  }
-
-  editMode() {
-    this.isEdit.next(true);
-  }
 }

@@ -1,4 +1,4 @@
-<form *ngIf="isShowForm" [formGroup]="profileForm" novalidate (ngSubmit)="onSubmit()">
+<form [formGroup]="profileForm" novalidate (ngSubmit)="onSubmit()">
   <mat-card>
     <mat-card-content>
       <fieldset class="simple-margin">
@@ -26,37 +26,36 @@
         </div>
       </fieldset>
       <fieldset class="simple-margin">
-        <mat-radio-group class="column-display" formArrayName="roles">
-          <mat-radio-button class="simple-margin" (change)="onChangeRole(role)" [checked]="profileForm.value.checkedRoleId === role.id"
-            [value]="role.name" *ngFor="let role of profileForm.value.roles">
+        <mat-radio-group class="column-display" formControlName="role">
+          <mat-radio-button class="simple-margin" [value]="role.name" *ngFor="let role of allRoles">
             {{ role.name }}
           </mat-radio-button>
-          <div class="row-display">
-            <mat-checkbox *ngFor="let skill of profileForm.value.skills | filter : profileForm.value.checkedRoleId; let i = index"
+          <div *ngIf="this.profileForm.value.role" class="row-display" formArrayName="skills">
+            <mat-checkbox *ngFor="let skill of filterSkillsByRole(profileForm.value.role); let i = index"
               [formControlName]="i">
-              {{skill.name}} {{profileForm.value.skills | json}}
+              {{skill}}
             </mat-checkbox>
           </div>
         </mat-radio-group>
       </fieldset>
       <fieldset class="fieldset-cont simple-margin">
-        <mat-slide-toggle class="col-50 simple-margin" [checked]="profileForm.value.isReadyToRelocate" (change)="onChangeReadyToRelocate()">
+        <mat-slide-toggle class="col-50 simple-margin" formControlName="isReadyToRelocate">
           Ready to Relocate
         </mat-slide-toggle>
         <mat-form-field class="col-50 simple-margin" *ngIf="profileForm.value.isReadyToRelocate" color="accent">
-          <mat-select placeholder="locations" formArrayName="locations" multiple [value]="profileForm.value.checkedlocationsId">
-            <mat-option value={{location.id}} *ngFor="let location of profileForm.value.locations">
-              {{location.name}}
+          <mat-select placeholder="locations" formControlName="locations" multiple>
+            <mat-option value={{location}} *ngFor="let location of allLocations">
+              {{location}}
             </mat-option>
           </mat-select>
         </mat-form-field>
       </fieldset>
     </mat-card-content>
     <mat-card-actions>
-      <button color="accent" (sumbmit)="onSubmit()" [disabled]='!profileForm.valid' mat-flat-button>Submit</button>
+      <button color="accent" (sumbmit)="onSubmit()" [disabled]='profileForm.valid' mat-flat-button>Submit</button>
     </mat-card-actions>
     <mat-card-footer>
-      {{currentUser | json}}
+      <pre>{{ profileForm.value | json}}</pre>
     </mat-card-footer>
   </mat-card>
 </form>

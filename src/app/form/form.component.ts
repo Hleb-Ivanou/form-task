@@ -1,13 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder, Validators, FormArray } from '@angular/forms';
+import { Observable, of } from 'rxjs';
+
 import { UserService } from '../user.service';
+
 import { ROLES } from '../mock/roles.mock';
 import { SKILLS } from '../mock/skills.mock';
 import { LOCATIONS } from '../mock/locations.mock';
+
 import { Role } from '../mock/role.model';
 import { User } from '../mock/user.model';
-import { Skill } from '../mock/skill.model';
-import { Observable, of } from 'rxjs';
+import { timingSafeEqual } from 'crypto';
+
 
 @Component({
   selector: 'app-form',
@@ -16,24 +20,13 @@ import { Observable, of } from 'rxjs';
 })
 export class FormComponent implements OnInit {
 
-  profileForm = this._formBuilder.group({
-    firstName: ['', Validators.required],
-    lastName: ['', Validators.required],
-    email: ['', [Validators.required, Validators.email]],
-    phone: ['', [Validators.required, Validators.pattern(/^\+375\((17|25|29|33|44)\)[0-9]{3}[0-9]{2}[0-9]{2}$/)]],
-    roles: this._formBuilder.array(ROLES),
-    checkedRoleId: [''],
-    skills: this._formBuilder.array([]),
-    checkedSkillsId: [[]],
-    locations: this._formBuilder.array(LOCATIONS),
-    isReadyToRelocate: [false],
-    checkedlocationsId: [[]],
-  });
+  allRoles: Role[] = ROLES;
+  allSkills: string[] = SKILLS;
+  allLocations: string[] = LOCATIONS;
 
-  skills: Skill[] = SKILLS;
+  profileForm;
   initialForm;
   currentUser: User = <User>{};
-  isShowForm: boolean;
   errorMsg = {
     required: 'This field is required!',
     email: 'Invalid email address!',
@@ -44,27 +37,42 @@ export class FormComponent implements OnInit {
   constructor(private _formBuilder: FormBuilder, private _userService: UserService) { }
 
   ngOnInit() {
-    this.initialForm = this.profileForm.value;
     this._userService.getCurrentUser().subscribe(current => {
       this.currentUser = current;
       this.fillForm(this.currentUser);
     });
-    this._userService.getIsShowForm().subscribe(value => this.isShowForm = value);
-    this.roleObs().subscribe(value => this.profileForm.patchValue(
-      {
-        skills: SKILLS.filter(el => {
-          console.log('onInit:', el);
-          return el.id === this.profileForm.value.checkedRoleId;
-        })
-      }
-    ));
+    this.profileForm = this.buidForm();
+    this.profileForm.get('role').valueChanges.subscribe(value => {
+      this.profileForm.setControl('skills', this.buildSkillsControls(value));
+    });
+  }
+
+  buidForm(): FormGroup {
+    return this._formBuilder.group({
+      firstName: ['', Validators.required],
+      lastName: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      phone: ['', [Validators.required, Validators.pattern(/^\+375\((17|25|29|33|44)\)[0-9]{3}[0-9]{2}[0-9]{2}$/)]],
+      role: [''],
+      skills: this._formBuilder.array([]),
+      isReadyToRelocate: [false],
+      locations: [[]]
+    });
+  }
+
+  filterSkillsByRole(checkedRole: string) {
+    return this.allRoles.find(el => el.name === checkedRole).skills;
+  }
+
+  buildSkillsControls(checkedRole: string) {
+    const abstractSkillArray = this._formBuilder.array([]) as FormArray;
+    this.filterSkillsByRole(checkedRole).forEach(el => { abstractSkillArray.push(this._formBuilder.control(false)); });
+    return abstractSkillArray;
   }
 
   get profileFormComtrols() {
     return this.profileForm.controls;
   }
-
-
 
   fillForm(user: User): void {
     if (Object.keys(user).length) {
@@ -72,36 +80,15 @@ export class FormComponent implements OnInit {
     } else {
       this.profileForm.reset(this.initialForm);
     }
-    console.log(this.profileForm.value);
   }
 
-  onChangeRole(role: Role): void {
-    this.profileForm.patchValue({
-      checkedRoleId: role.id
-    });
-  }
-
-  roleObs() {
-    return of(this.profileForm.value.checkedRoleId);
-  }
-
-  onChangeReadyToRelocate() {
-    this.profileForm.patchValue({
-      isReadyToRelocate: !this.profileForm.value.isReadyToRelocate
-    });
-    const skillsArray = this.profileForm.get('skills') as FormArray;
-    this.skills.forEach(el => skillsArray.push(new FormControl(false)));
+  get checkedSkills(): string[] {
+    return this.filterSkillsByRole(this.profileForm.value.role).filter((el, i) => this.profileForm.value.skills[i]);
   }
 
   onSubmit() {
-
-    const { roles, skills, locations, ...newUserFromForm } = this.profileForm.value;
-    this.currentUser = newUserFromForm;
-    const newUser = Object.assign(
-      { id: this.currentUser ? this.currentUser.id : this._userService.generateUserId() },
-      this.currentUser
-    );
-    this._userService.submitForm(newUser);
+    console.log(this.checkedSkills);
+    const { ...newUserFromForm } = this.profileForm.value;
   }
 
 

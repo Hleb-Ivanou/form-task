@@ -12,9 +12,7 @@ export class UserListComponent implements OnInit {
 
   users = [];
 
-  constructor(private _userService: UserService) {
-
-  }
+  constructor(private _userService: UserService) { }
 
   ngOnInit() {
     this.getUsers();
@@ -26,14 +24,12 @@ export class UserListComponent implements OnInit {
   }
 
   editUser(user: User): void {
-    this._userService.setCurrentUser(user);
-    this._userService.showForm();
-    this._userService.editMode();
+    this._userService.updateCurrentUser(user);
   }
 
   addUser() {
-    this._userService.showForm();
-    this._userService.setCurrentUser(<User>{});
+
+    this._userService.updateCurrentUser(<User>{});
   }
 
 }

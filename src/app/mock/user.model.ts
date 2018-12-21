@@ -1,11 +1,11 @@
 export class User {
-    id: number;
+    id: string;
     firstName: string;
     lastName: string;
     email: string;
     phone: string;
-    checkedRoleId: number;
-    checkedSkillsId: number[];
+    checkedRole: string;
+    checkedSkills: string[];
     isReadyToRelocate: boolean;
-    checkedlocationsId: string[];
+    checkedlocations: string[];
 }

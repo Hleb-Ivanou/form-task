@@ -2,15 +2,15 @@ import { Role } from './role.model';
 
 export const ROLES: Role[] = [
     {
-        id: 10,
-        name: 'Frontend'
+        name: 'Frontend',
+        skills: ['Java Script', 'HTML', 'CSS']
     },
     {
-        id: 11,
-        name: 'Backend'
+        name: 'Backend',
+        skills: ['Java', 'PHP', 'Apache']
     },
     {
-        id: 12,
-        name: 'Fullstack'
+        name: 'Fullstack',
+        skills: ['Java Script', 'Java', 'PHP', 'HTML', 'CSS', 'Apache']
     }
 ];
